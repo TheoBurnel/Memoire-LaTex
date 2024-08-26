@@ -1,0 +1,280 @@
+%Document vide aux normes de l'École nationale des Chartes
+%Dernières modifications E. Rouquette (12/2023)
+
+%%%%%%%%%%%%%%%%%%%%%% PRÉAMBULE
+%%%%%%%%%%%%%% partie obligatoire du préambule
+\documentclass[a4paper,12pt,twoside]{book}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage[french]{babel}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGES UTILISÉS
+\usepackage{csquotes} 
+\usepackage{lettrine} 
+\usepackage[style=enc,sorting=nyt,maxbibnames=10]{biblatex}
+\addbibresource{./biblio/bibliographie.bib}
+
+%%%Faire un ou plusieurs index
+\usepackage{imakeidx}
+\makeindex[intoc]
+\usepackage{idxlayout}
+
+%RAJOUTEZ ICI VOS PACKAGES
+\usepackage{listings}%pour la mise en forme du code source
+\usepackage{mdframed}%pour un environnement qui sera coupé
+\usepackage{tcolorbox}%pour les couleurs
+\usepackage{graphicx}%pour insérer des images
+\usepackage{float}%pour un placement d'images strict
+\usepackage{afterpage}%pour contrôler le texte qui suit l'image
+\usepackage{pdflscape}%pour mettre l'image en format paysage
+\usepackage{subfigure}%pour mettre des images côte à côte
+\usepackage{caption}%pour répartir les images
+\usepackage{url}%pour certaines URL
+\usepackage{array}%pour le tableau
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONFIGURATION DE MISE EN PAGE
+%%%%%% Les compteurs (sections, subsections, etc)
+\renewcommand{\thesection}{\Roman{section}.}
+
+%%%%%  Configurer le document selon les normes de l'école
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength\parindent{1cm}
+
+%%%%% Mise en forme des headers (haut de page)
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength\headheight{16pt}
+\renewcommand{\sectionmark}[1]{}
+\renewcommand{\chaptermark}[1]{\markboth{\small\textit{#1}}{}}
+
+%%%%%%% Package hyperref
+\usepackage[colorlinks=false, breaklinks=true, pdfusetitle, pdfsubject ={Mémoire HN}, pdfkeywords={visualisation, carte interactive, frise chronologique, fac-similé numérique}]{hyperref} %
+\usepackage[numbered]{bookmark}%
+% Compléter pdfsubjet et pdfkeywords
+
+%%%%%%%%%%%%%%%%%% DÉFINITION DES COMMANDES ET ENVIRONNMENTS
+% Commande pour simplifier l'index
+\newcommand{\indexmot}[1]{#1\index{#1}}
+
+% Définition des couleurs personnalisées
+\definecolor{eclipseStrings}{RGB}{42,0.0,255}  % Couleur pour les chaînes de caractères (bleu)
+\definecolor{eclipseKeywords}{RGB}{127,0,85}  % Couleur pour les mots-clés (rose)
+\colorlet{numb}{magenta!60!black}  % Couleur pour les chiffres (magenta foncé)
+
+% Configuration de la mise en forme pour le langage JSON
+\lstdefinelanguage{json}{
+	basicstyle=\normalfont\ttfamily,  % Style de base : police à chasse fixe normale
+	commentstyle=\color{eclipseStrings},  % Style des commentaires : couleur 'eclipseStrings'
+	stringstyle=\color{eclipseKeywords},  % Style des chaînes de caractères : couleur 'eclipseKeywords'
+	numbers=left,  % Affiche les numéros de ligne à gauche
+	numberstyle=\scriptsize,  % Style des numéros de ligne : petite taille
+	stepnumber=1,  % Numérote chaque ligne
+	numbersep=8pt,  % Espace entre les numéros de ligne et le code
+	showstringspaces=false,  % Ne montre pas les espaces dans les chaînes de caractères
+	breaklines=true,  % Autorise le retour à la ligne automatique pour les lignes longues
+	frame=lines,  % Encadre le code avec des lignes simples
+	backgroundcolor=\color{lightgray!20},  % Couleur de fond du code : gris clair
+	string=[s]{"}{"},  % Délimiteurs pour les chaînes de caractères (guillemets doubles)
+	comment=[l]{:\ "},  % Délimiteur pour les commentaires (deux-points suivi de guillemets)
+	morecomment=[l]{:"},  % Délimiteur supplémentaire pour les commentaires (deux-points suivi de guillemets)
+	literate=
+	*{0}{{{\color{numb}0}}}{1}  % Colorie les chiffres de 0 à 9 en magenta foncé
+	{1}{{{\color{numb}1}}}{1}
+	{2}{{{\color{numb}2}}}{1}
+	{3}{{{\color{numb}3}}}{1}
+	{4}{{{\color{numb}4}}}{1}
+	{5}{{{\color{numb}5}}}{1}
+	{6}{{{\color{numb}6}}}{1}
+	{7}{{{\color{numb}7}}}{1}
+	{8}{{{\color{numb}8}}}{1}
+	{9}{{{\color{numb}9}}}{1}
+}
+
+% Définir les styles pour le code JavaScript
+\lstdefinelanguage{JavaScript}{
+	keywords={break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with, let, const, yield},
+	keywordstyle=\color{blue}\bfseries,
+	ndkeywords={class, export, boolean, throw, implements, import, this},
+	ndkeywordstyle=\color{darkgray}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstset{
+	language=JavaScript,
+	backgroundcolor=\color{lightgray!20},
+	extendedchars=true,
+	basicstyle=\footnotesize\ttfamily,
+	showstringspaces=false,
+	showspaces=false,
+	numbers=left,
+	numberstyle=\footnotesize,
+	numbersep=9pt,
+	tabsize=2,
+	breaklines=true,
+	showtabs=false,
+	captionpos=b
+}
+
+% L'environnement pour mirador
+\mdfdefinestyle{graybox}{
+	backgroundcolor=gray!10,
+	linecolor=gray!80,
+	linewidth=0.5pt,
+	roundcorner=4pt,
+	innermargin=2pt,
+	outermargin=2pt,
+	innertopmargin=2pt,
+	innerbottommargin=2pt,
+	splittopskip=\topskip,
+	splitbottomskip=\topskip,
+	skipabove=\baselineskip,
+	skipbelow=\baselineskip
+}
+
+% Configuration de l'index
+\idxlayout{
+	columns=1, % une seule colonne
+}
+
+%%%%%%%%%%%%%% INFORMATIONS POUR LA PAGE DE TITRE
+\author{Théo Burnel - M2 TNAH}
+\title{Exploration visuelle d'une base de données~: apports de la datavisualisation à l’interprétation des analyses physico-chimiques des enluminures}
+
+%%%%%%%%%%%%%%%%%%%%%% DOCUMENT
+\begin{document}
+	\begin{titlepage}
+		\begin{center}
+			
+			\bigskip
+			
+			\begin{large}				
+				ÉCOLE NATIONALE DES CHARTES\\
+				UNIVERSITÉ PARIS, SCIENCES \& LETTRES
+			\end{large}
+			\begin{center}\rule{2cm}{0.02cm}\end{center}
+			
+			\bigskip
+			\bigskip
+			\bigskip
+			\begin{Large}
+				\textbf{Théo Burnel}\\
+			\end{Large}
+			%selon le cas
+			\begin{normalsize} \textit{docteur en histoire moderne}\\
+			\end{normalsize}
+			
+			\bigskip
+			\bigskip
+			\bigskip
+			
+			\begin{Huge}
+				\textbf{Exploration visuelle d'une base de données~: apports de la datavisualisation à l’interprétation des analyses physico-chimiques des enluminures}\\
+			\end{Huge}
+			\bigskip
+			\bigskip
+			\begin{LARGE}
+				\textbf{Carte interactive, frise chronologique et facs-similés numériques}\\
+			\end{LARGE}
+			
+			\bigskip
+			\bigskip
+			\bigskip
+			\begin{large}
+			\end{large}
+			\vfill
+			
+			\begin{large}
+				Mémoire 
+				pour le diplôme de master \\
+				\enquote{Technologies numériques appliquées à l'histoire} \\
+				\bigskip
+				2024
+			\end{large}
+			
+		\end{center}
+	\end{titlepage}
+	
+	\thispagestyle{empty}	
+	\cleardoublepage
+	
+	\frontmatter
+	
+	\chapter{Résumé}
+	\medskip
+	Ce mémoire propose de revenir sur les trois visualisations produites autour des projets \enquote{La couleur~: artefacts, matière et cognition} de Charlotte Denoël et \enquote{La fabrique matérielle du visuel~: panneaux peints en Méditerranée} de Sigrid Mirabaud. Une cartographie interactive (avec Leaflet) et une frise chronologique (avec Vikus) proposent une mise en ordre du temps et de l’espace selon l’histoire des enluminures des manuscrits et des panneaux peints. Une édition de fac-similés numériques (avec des manifestes IIIF) contribue à la communication et à la médiation de la recherche.	\\
+	
+	\textbf{Mots-clés:} visualisation~; carte interactive~; frise chronologique~; fac-similé numérique
+	
+	\textbf{Informations bibliographiques:} Théo Burnel, \textit{Exploration visuelle d'une base de données~: apports de la datavisualisation à l’interprétation des analyses physico-chimiques des enluminures. Carte interactive, frise chronologique et facs-similés numériques}, mémoire de master \enquote{Technologies numériques appliquées à l'histoire}, dir. Chloé Pochon, École nationale des chartes, 2024.
+	
+	\newpage{\pagestyle{empty}\cleardoublepage}
+	
+	\chapter{Remerciements}
+	\lettrine{M}Mes premiers remerciements vont à Madame Charlotte Denoël pour m'avoir accueilli au sein du département des manuscrits de la Bibliothèque nationale de France pendant la durée de ce stage. Je tiens à la remercier publiquement de m'avoir permis de réaliser ce travail dans des conditions si agréables et enrichissantes.\par
+	Je tiens également à remercier Madame Chloé Pochon d'avoir accepté de diriger ce mémoire et de m'avoir proposé des solutions techniques au cours de ces trois mois.\par
+	Enfin, je souhaite exprimer ma gratitude à Madame Emmanuelle Bermès pour m'avoir accepté dans son Master et pour son suivi tout au long de cette année.
+	\newpage{\pagestyle{empty}\cleardoublepage}
+	
+	%%%%%%%%%%%% \bibliographie ici (normes de l'EnC)
+	\printbibliography
+	\newpage{\pagestyle{empty}\cleardoublepage}
+	
+	\chapter{Introduction}
+	\input{./textes/intro/document.tex}
+	\newpage{\pagestyle{empty}\cleardoublepage}
+	
+	%%%%%%%%%%%%%%%%%Le corps du mémoire
+	\mainmatter	
+	
+	\chapter{Présentation du projet de recherche }
+	\input{./textes/chap1/document.tex}
+	
+	\chapter{Ordonner les données dans l'espace, la carte interactive}
+	\input{./textes/chap2/document.tex}
+	
+	\chapter{Ordonner les données dans le temps, la chronologie interactive}
+	\input{./textes/chap3/document.tex}
+	
+	\chapter{Annotations sémantiques d'images}
+	\input{./textes/chap4/document.tex}
+	\cleardoublepage
+		
+	\chapter*{Conclusion}
+	\addcontentsline{toc}{chapter}{Conclusion}
+	\markboth{\small\textit{Conclusion}}{}
+	\input{./textes/conclusion/document.tex}
+	\newpage{\pagestyle{empty}\cleardoublepage}
+	
+	%%%%%%%%%%%%%%%%%%
+	\appendix
+	
+	\chapter[Analyse du Beatus]{Analyse du combat du paon et du serpent dans le Beatus de Saint-Sever}
+	\input{./textes/annexe/annexe1.tex}
+	\chapter[Analyse en JSON]{Exemple d’analyse de feuillet en JSON}
+	\input{./textes/annexe/annexe2.tex}
+	\chapter[Mirador dans Omeka ~S]{Mirador dans Omeka~S}
+	\input{./textes/annexe/annexe3.tex}
+	\chapter[Retour critique]{Retour critique et problèmes techniques}
+	\input{./textes/annexe/annexe4.tex}
+	\chapter[Liste des manifestes IIIF]{Liste des manifestes IIIF}
+	\input{./textes/annexe/annexe5.tex}
+	\chapter[Liens des projets]{Liens vers la carte interactive et la frise chronologique}
+	\input{./textes/annexe/annexe6.tex}
+	\newpage{\pagestyle{empty}\cleardoublepage}
+	
+	%%%%%%%%%%%%%%%%%%
+	\backmatter
+	
+	\printindex
+	\listoffigures
+	\tableofcontents
+\end{document}
